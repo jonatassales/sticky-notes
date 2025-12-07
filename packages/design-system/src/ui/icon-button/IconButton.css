@@ -1,0 +1,13 @@
+:root {
+  --ds-icon-button-bg: transparent;
+}
+
+.ds-icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: var(--icon-button-bg);
+  border: none;
+  box-sizing: border-box;
+}

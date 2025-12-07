@@ -1,0 +1,5 @@
+@import "../../foundation/shape.css";
+
+.ds-skeleton {
+  border-radius: var(--ds-radius-1);
+}

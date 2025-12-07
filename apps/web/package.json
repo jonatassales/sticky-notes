@@ -1,0 +1,29 @@
+{
+  "name": "web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --clearScreen false",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint \"src/**/*.ts\""
+  },
+  "dependencies": {
+    "@preact/signals-react": "^3.6.1",
+    "@repo/contracts": "workspace:*",
+    "@repo/ds": "workspace:*",
+    "lucide-react": "^0.556.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
+    "typescript": "5.5.4",
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.21"
+  }
+}

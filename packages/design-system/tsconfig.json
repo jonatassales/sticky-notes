@@ -1,0 +1,14 @@
+{
+  "extends": "@repo/typescript-config/ds.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "allowJs": false,
+    "resolveJsonModule": true,
+    "paths": {
+      "@ds/*": ["./*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["dist", "node_modules"]
+}

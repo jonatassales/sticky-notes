@@ -1,0 +1,21 @@
+@import "@repo/ds/foundation";
+@import "@repo/ds/ui";
+
+html,
+body,
+#app {
+  max-width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--background);
+  background: var(--foreground);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}

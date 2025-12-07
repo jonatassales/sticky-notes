@@ -1,0 +1,35 @@
+{
+  "name": "@repo/react",
+  "version": "0.0.0",
+  "private": false,
+  "main": "./dist/utils/index.js",
+  "module": "./dist/utils/index.mjs",
+  "types": "./dist/utils/index.d.ts",
+  "exports": {
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.mjs",
+      "require": "./dist/utils/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
+    "tsup": "^8.0.2",
+    "typescript": "5.5.4"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "name": "@repo/ds",
+  "version": "0.0.0",
+  "private": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./foundation": {
+      "style": "./dist/foundation/index.css"
+    },
+    "./ui": {
+      "style": "./dist/ui/index.css",
+      "types": "./dist/ui/index.d.ts",
+      "import": "./dist/ui/index.mjs",
+      "require": "./dist/ui/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup && npm run css:build && npm run css:foundation && npm run css:ui",
+    "dev": "npm run build --watch",
+    "lint": "eslint . --max-warnings 0",
+    "clean": "rm -rf .turbo node_modules dist",
+    "css:foundation": "cpx src/foundations/*.css dist/foundation || true",
+    "css:ui": "cpx src/ui/*.css dist/ui || true",
+    "css:build": "postcss src/foundation/index.css -o dist/foundation/index.css"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
+    "cpx": "^1.5.0",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "postcss-import": "^16.1.1",
+    "tsup": "^8.0.2",
+    "typescript": "5.5.4"
+  },
+  "dependencies": {
+    "@repo/react": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

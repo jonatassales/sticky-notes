@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:unused.db"
+}
+
+model Note {
+  id     String @id
+  x      Int
+  y      Int
+  width  Int
+  height Int
+}
