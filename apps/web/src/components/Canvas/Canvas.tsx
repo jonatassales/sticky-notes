@@ -1,4 +1,4 @@
-import { TrashZone } from "@web/components";
+import { TrashZone } from "../TrashZone/TrashZone";
 import "./Canvas.css";
 
 export function Canvas() {
