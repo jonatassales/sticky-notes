@@ -23,4 +23,4 @@ import {
     DeleteNoteHandler,
   ],
 })
-export class NotesModule {}
+export class NoteModule {}

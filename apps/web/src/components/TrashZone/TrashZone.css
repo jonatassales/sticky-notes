@@ -1,2 +1,11 @@
 .trash-zone {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  border: dashed grey 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 200px;
 }

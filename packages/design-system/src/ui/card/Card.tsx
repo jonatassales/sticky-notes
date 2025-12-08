@@ -3,7 +3,7 @@ import { cn } from "@repo/react/utils";
 
 import "./Card.css";
 
-export type CardProps = React.ButtonHTMLAttributes<HTMLDivElement>;
+export type CardProps = React.HTMLAttributes<HTMLDivElement>;
 
 export const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
   const { className, children, ...rest } = props;

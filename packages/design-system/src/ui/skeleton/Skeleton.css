@@ -2,4 +2,82 @@
 
 .ds-skeleton {
   border-radius: var(--ds-radius-1);
+  position: relative;
+  overflow: hidden;
+  display: block;
+  background-color: #e9ecef;
+  border-radius: 0.5rem;
+  height: inherit;
+  width: inherit;
+
+  /* subtle texture */
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(0, 0, 0, 0.02) 0%, transparent 20%),
+    radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.02) 0%, transparent 18%);
+}
+
+/* wave layer */
+.ds-skeleton::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.03) 0px,
+    rgba(255, 255, 255, 0.03) 6px,
+    rgba(0, 0, 0, 0.03) 6px,
+    rgba(0, 0, 0, 0.03) 12px
+  );
+  filter: blur(6px);
+  opacity: 0.7;
+  pointer-events: none;
+  animation: skeleton-wave 2.6s linear infinite;
+}
+
+/* shimmer */
+.ds-skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes skeleton-wave {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 40px 40px;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(100%) skewX(-20deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-skeleton::before,
+  .ds-skeleton::after {
+    animation: none;
+    opacity: 0.5;
+  }
 }

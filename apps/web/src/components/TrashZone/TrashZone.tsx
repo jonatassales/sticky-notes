@@ -7,7 +7,7 @@ export function TrashZone() {
   return (
     <div className="trash-zone">
       <IconButton>
-        <Shredder color="red" size={48} />
+        <Shredder color="red" size={80} />
       </IconButton>
     </div>
   );
