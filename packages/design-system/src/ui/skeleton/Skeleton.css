@@ -1,4 +1,4 @@
-@import "../../foundation/shape.css";
+@import "../../foundation/radius.css";
 
 .ds-skeleton {
   border-radius: var(--ds-radius-1);

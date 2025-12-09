@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "build": "tsup && npm run css:build && npm run css:foundation && npm run css:ui",
-    "dev": "npm run build --watch",
+    "dev": "echo 'no dev for now'",
     "lint": "eslint . --max-warnings 0",
     "clean": "rm -rf .turbo node_modules dist",
     "css:foundation": "cpx src/foundations/*.css dist/foundation || true",

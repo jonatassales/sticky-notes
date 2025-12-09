@@ -1,9 +1,6 @@
 @import "../../foundation/colors.css";
 
 .ds-card {
-  display: flex;
-  border-radius: var(--ds-radius-1);
-  padding: 1rem;
   background: var(--ds-foreground);
   color: var(--ds-background);
 }

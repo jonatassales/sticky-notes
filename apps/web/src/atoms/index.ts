@@ -1,2 +1,2 @@
-export { currentStickyNote } from "./currentStickyNote";
 export { stickyNotes } from "./stickyNotes";
+export { currentStickyNote } from "./currentStickyNote";

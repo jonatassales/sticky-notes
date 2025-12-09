@@ -1,15 +1,33 @@
 /* Root full-screen area */
 .sn-root {
   position: absolute;
-  background-color: yellow;
+
+  padding: var(--ds-spacing-2);
+
+  border: solid var(--ds-spacing-half) var(--ds-foreground);
+  border-radius: var(--ds-radius-2);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-spacing-2);
 }
 
 .sn-text {
-  color: var(--foreground);
-  position: relative;
-  width: 100%;
-  height: 100%;
   background-color: transparent;
   border: none;
   outline: none;
+}
+
+.nc-root {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.nc-resize {
+  cursor: crosshair;
+}
+
+.nc-grab {
+  cursor: grab;
 }
