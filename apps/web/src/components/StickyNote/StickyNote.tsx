@@ -1,17 +1,30 @@
-import { memo } from "react";
+import { memo, useEffect, useRef } from "react";
 import { Card, CardProps } from "@repo/ds/ui";
-import { stickyNotes } from "@web/atoms";
+import { Note } from "@repo/contracts";
 
 import { NoteController } from "./NoteController";
 import "./StickyNote.css";
 
-export const StickyNote = memo(function StickyNote(props: CardProps) {
+export function StickyNote(props: CardProps) {
+  const noteRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    noteRef.current?.addEventListener("mousedown", handleMouseDown);
+
+    return () =>
+      noteRef.current?.addEventListener("mousedown", handleMouseDown);
+  }, []);
+
+  const handleMouseDown = (event: MouseEvent) => {
+    event.stopPropagation();
+  };
+
   const hanndleOnBlur = () => {
-    console.log("Updates stickyNotes: ", stickyNotes.value);
+    console.log("Updates stickyNotes: ");
   };
 
   return (
-    <Card className="sn-root" {...props}>
+    <Card className="sn-root" {...props} ref={noteRef}>
       <NoteController />
       <input
         className="sn-text"
@@ -20,4 +33,4 @@ export const StickyNote = memo(function StickyNote(props: CardProps) {
       />
     </Card>
   );
-});
+}

@@ -1,0 +1,1 @@
+export { useCanvasEventRegistry } from "./useCanvasEventRegistry";

@@ -1,0 +1,1 @@
+export { noteFactory } from "./note";

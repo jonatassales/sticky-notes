@@ -1,4 +1,4 @@
-export { createStickyNote } from "./createStickyNote";
+// export { createStickyNote } from "./createStickyNote";
 export { resizeStickyNote } from "./resizeStickyNote";
-export { updateCurrentStickyNote } from "./updateCurrentStickyNote";
+// export { updateCurrentStickyNote } from "./updateCurrentStickyNote";
 export { moveStickyNote } from "./moveStickyNote";
