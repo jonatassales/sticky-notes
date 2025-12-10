@@ -1,6 +1,6 @@
 import { Note } from "@repo/contracts";
 
-export function buildNoteStyle(note: Note) {
+export function noteStyleFactory(note: Note) {
   return {
     left: `${note.position.x}px`,
     top: `${note.position.y}px`,

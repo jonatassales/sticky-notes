@@ -1,6 +1,6 @@
 import { Note } from "@repo/contracts";
 import { TrashZone, StickyNote } from "@web/components";
-import { buildNoteStyle } from "@web/utils";
+import { noteStyleFactory } from "@web/factory";
 
 import "./Canvas.css";
 
@@ -11,11 +11,17 @@ interface CanvasProps {
 export function Canvas(props: CanvasProps) {
   const { stickyNotes } = props;
 
+  console.log("Canvas");
+
   return (
     <div className="cv-root">
       {!!stickyNotes.length &&
         stickyNotes.map((note) => (
-          <StickyNote key={note.id} style={buildNoteStyle(note)} />
+          <StickyNote
+            noteId={note.id}
+            key={note.id}
+            style={noteStyleFactory(note)}
+          />
         ))}
       <TrashZone />
     </div>

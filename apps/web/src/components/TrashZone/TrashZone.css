@@ -1,11 +1,15 @@
 .tz-root {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
-  border: dashed grey 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 200px;
-  height: 200px;
+  bottom: var(--ds-spacing-4);
+  right: var(--ds-spacing-4);
+  border: dashed var(--ds-grey-4) var(--ds-spacing-2);
+  width: calc(var(--ds-spacing-5) * 4);
+  height: calc(var(--ds-spacing-5) * 4);
+}
+
+.tz-icon {
+  color: var(--ds-danger-text);
 }

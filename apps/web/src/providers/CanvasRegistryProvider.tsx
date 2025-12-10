@@ -1,60 +1,82 @@
-import { ReactNode, createContext, useEffect, useState } from "react";
-import { Note, NoteState } from "@repo/contracts";
+import { ReactNode, createContext, useEffect, useRef, useState } from "react";
+
+import { Note } from "@repo/contracts";
 import {
   createStickyNotesListener,
   createCurrentStickyNoteListener,
 } from "@web/events/listeners";
 
-interface CanvasRestryProviderProps {
+interface CanvasRegistryProviderProps {
   children: ReactNode;
 }
 
-interface CanvasRestryProviderValue {
+interface CanvasRegistryProviderValue {
   stickyNotes: Note[];
   currentStickyNote: Note | null;
+  setStickyNotes: React.Dispatch<React.SetStateAction<Note[]>>;
+  setCurrentStickyNote: React.Dispatch<React.SetStateAction<Note | null>>;
 }
 
 export const CanvasEventRegistryContext =
-  createContext<CanvasRestryProviderValue | null>(null);
+  createContext<CanvasRegistryProviderValue | null>(null);
 
 export function CanvasRegistryProvider({
   children,
-}: CanvasRestryProviderProps) {
+}: CanvasRegistryProviderProps) {
   const [stickyNotes, setStickyNotes] = useState<Note[]>([]);
   const [currentStickyNote, setCurrentStickyNote] = useState<Note | null>(null);
+  const stickyNotesRef = useRef<Note[]>([]);
+  const currentStickyNoteRef = useRef<Note | null>(null);
 
   useEffect(() => {
-    // TODO: Improve this section
-    const mouseUpHandler = (event: MouseEvent) => {
-      if (currentStickyNote?.id) {
-        setCurrentStickyNote({
-          ...currentStickyNote,
-          state: NoteState.Stale,
-        });
-      }
-    };
+    stickyNotesRef.current = stickyNotes;
+  }, [stickyNotes]);
 
-    const stickyNotesHandler = createStickyNotesListener({ setStickyNotes });
-    const currentStickyNoteHandler = createCurrentStickyNoteListener({
-      setCurrentStickyNote,
-      stickyNotes,
+  useEffect(() => {
+    currentStickyNoteRef.current = currentStickyNote;
+  }, [currentStickyNote]);
+
+  const mouseUpHandler = () => {
+    const prev = currentStickyNoteRef.current;
+    if (prev) {
+      setCurrentStickyNote({ ...prev, state: prev.state });
+    }
+  };
+
+  const stickyListener = () =>
+    createStickyNotesListener({
+      stickyNotesRef,
+      setStickyNotes,
     });
-    document.addEventListener("mousedown", stickyNotesHandler);
-    document.addEventListener("mousedown", currentStickyNoteHandler);
+
+  const currentStickyListener = () =>
+    createCurrentStickyNoteListener({
+      stickyNotesRef,
+      setCurrentStickyNote,
+    });
+
+  useEffect(() => {
+    const stickyHandler = stickyListener();
+    const currentHandler = currentStickyListener();
+
+    document.addEventListener("mousedown", stickyHandler);
+    document.addEventListener("mousedown", currentHandler);
     document.addEventListener("mouseup", mouseUpHandler);
 
     return () => {
-      document.removeEventListener("mousedown", stickyNotesHandler);
-      document.removeEventListener("mousedown", currentStickyNoteHandler);
+      document.removeEventListener("mousedown", stickyHandler);
+      document.removeEventListener("mousedown", currentHandler);
       document.removeEventListener("mouseup", mouseUpHandler);
     };
-  }, []);
+  }, [stickyListener, currentStickyListener, mouseUpHandler]);
 
   return (
     <CanvasEventRegistryContext.Provider
       value={{
         stickyNotes,
         currentStickyNote,
+        setStickyNotes,
+        setCurrentStickyNote,
       }}
     >
       {children}

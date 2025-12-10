@@ -1,24 +1,21 @@
-import { Note } from "@repo/contracts";
-import { noteFactory } from "@web/factory";
+import { Note, NoteState } from "@repo/contracts";
 
-interface CurrentStickyNotesListenerArgs {
-  stickyNotes: Note[];
+interface CreateCurrentStickyNoteArgs {
   setCurrentStickyNote: React.Dispatch<React.SetStateAction<Note | null>>;
+  stickyNotesRef: React.RefObject<Note[]>;
 }
 
 export function createCurrentStickyNoteListener({
   setCurrentStickyNote,
-  stickyNotes,
-}: CurrentStickyNotesListenerArgs) {
-  return function onMouseDown(event: MouseEvent) {
-    setCurrentStickyNote(
-      noteFactory({
-        position: {
-          x: event.x,
-          y: event.y,
-        },
-        prevNotes: stickyNotes,
-      })
-    );
+  stickyNotesRef,
+}: CreateCurrentStickyNoteArgs) {
+  return function onMouseDown(_: globalThis.MouseEvent) {
+    const notes = stickyNotesRef.current;
+    const lastNote = notes[notes.length - 1];
+
+    setCurrentStickyNote({
+      ...lastNote,
+      state: NoteState.Stale,
+    });
   };
 }

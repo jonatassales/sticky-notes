@@ -1,11 +1,13 @@
 import { useContext } from "react";
 import { CanvasEventRegistryContext } from "@web/providers";
+import { ContextError, errorResolver } from "@web/errors";
 
 export function useCanvasEventRegistry() {
   const context = useContext(CanvasEventRegistryContext);
 
   if (!context) {
-    throw new Error("TODO: map error messages");
+    const error = errorResolver(ContextError.CanvasEventRegistryError);
+    throw new Error(error.message);
   }
 
   return context;

@@ -22,7 +22,7 @@ export const TrashZone = memo(function TrashZone() {
   return (
     <div className="tz-root" ref={trashZoneRef}>
       <IconButton>
-        <Shredder color="red" size={80} />
+        <Shredder className="tz-icon" size={80} />
       </IconButton>
     </div>
   );

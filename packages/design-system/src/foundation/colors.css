@@ -1,11 +1,60 @@
 :root {
   --ds-background: #ffffff;
   --ds-foreground: #171717;
+
+  --ds-yellow-100: #fff9c4;
+  --ds-yellow-200: #fff59d;
+  --ds-yellow-300: #fff176;
+  --ds-yellow-400: #ffee58;
+
+  --ds-pink-100: #f8bbd0;
+  --ds-pink-200: #f48fb1;
+  --ds-pink-300: #f06292;
+  --ds-pink-400: #ec407a;
+
+  --ds-blue-100: #bbdefb;
+  --ds-blue-200: #90caf9;
+  --ds-blue-300: #64b5f6;
+  --ds-blue-400: #42a5f5;
+
+  --ds-green-100: #c8e6c9;
+  --ds-green-200: #a5d6a7;
+  --ds-green-300: #81c784;
+  --ds-green-400: #66bb6a;
+
+  --ds-purple-100: #e1bee7;
+  --ds-purple-200: #ce93d8;
+  --ds-purple-300: #ba68c8;
+  --ds-purple-400: #ab47bc;
+
+  --ds-grey-1: #f5f5f5;
+  --ds-grey-2: #e0e0e0;
+  --ds-grey-3: #bdbdbd;
+  --ds-grey-4: #9e9e9e;
+
+  --ds-danger-1: #ffecec;
+  --ds-danger-2: #ffd2d2;
+  --ds-danger-3: #ffb3b3;
+  --ds-danger-4: #ff8c8c;
+
+  --ds-danger-text: #a33a3a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --ds-background: #0a0a0a;
     --ds-foreground: #ededed;
+
+    --ds-grey-1: #1c1c1c;
+    --ds-grey-2: #2a2a2a;
+    --ds-grey-3: #3d3d3d;
+    --ds-grey-4: #555555;
+
+    --ds-danger-1: #4a1f1f;
+    --ds-danger-2: #5c2626;
+    --ds-danger-3: #803030;
+    --ds-danger-4: #b84545;
+
+    --ds-danger-text: #ffb3b3;
   }
 }
