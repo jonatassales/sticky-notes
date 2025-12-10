@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useEffect, useRef, useState } from "react";
 
-import { Note } from "@repo/contracts";
+import { Note, NoteState } from "@repo/contracts";
 import {
   createStickyNotesListener,
   createCurrentStickyNoteListener,
@@ -37,12 +37,18 @@ export function CanvasRegistryProvider({
     currentStickyNoteRef.current = currentStickyNote;
   }, [currentStickyNote]);
 
-  // const mouseUpHandler = () => {
-  //   const prev = currentStickyNoteRef.current;
-  //   if (prev) {
-  //     setCurrentStickyNote({ ...prev, state: prev.state });
-  //   }
-  // };
+  const mouseUpHandler = (event: MouseEvent) => {
+    if (currentStickyNoteRef.current?.id) {
+      setCurrentStickyNote({
+        ...currentStickyNoteRef.current,
+        state: NoteState.Stale,
+        position: {
+          x: event.x,
+          y: event.y,
+        },
+      });
+    }
+  };
 
   // const stickyListener = () =>
   //   createStickyNotesListener({
@@ -63,12 +69,15 @@ export function CanvasRegistryProvider({
       const position = { x: event.x, y: event.y };
       const prevNotes = stickyNotesRef.current;
       const newNote = noteFactory({ prevNotes, position });
+      console.log(newNote);
       setCurrentStickyNote(newNote);
-      setStickyNotes((prev) => [...prev, newNote]);
+      if (currentStickyNote?.id) {
+        setStickyNotes([...stickyNotes, currentStickyNote]);
+      }
     };
 
     document.addEventListener("mousedown", onCreateStickNoteHandler);
-    // document.addEventListener("mouseup", mouseUpHandler);
+    document.addEventListener("mouseup", mouseUpHandler);
 
     return () => {
       document.removeEventListener("mousedown", onCreateStickNoteHandler);
@@ -76,7 +85,7 @@ export function CanvasRegistryProvider({
       //   "mousedown",
       //   onCreateCurrentStickNoteHandler
       // );
-      // document.removeEventListener("mouseup", mouseUpHandler);
+      document.removeEventListener("mouseup", mouseUpHandler);
     };
   }, []);
 

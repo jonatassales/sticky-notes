@@ -5,16 +5,17 @@ import { Canvas } from "./Canvas";
 import { NoteState } from "@repo/contracts";
 
 export function CanvasContainer() {
-  const { currentStickyNote, stickyNotes } = useCanvasEventRegistry();
+  const { currentStickyNote, stickyNotes, setCurrentStickyNote } =
+    useCanvasEventRegistry();
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
-      if (
-        currentStickyNote?.id &&
-        (currentStickyNote.state === NoteState.Dragging ||
-          currentStickyNote.state === NoteState.Resizing)
-      ) {
-        console.log("dragging or resizing");
+      if (currentStickyNote?.state === NoteState.Dragging) {
+        console.log("Dragging");
+        setCurrentStickyNote({
+          ...currentStickyNote,
+          position: { x: event.x, y: event.y },
+        });
       }
     };
 
@@ -23,7 +24,9 @@ export function CanvasContainer() {
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [currentStickyNote?.id]);
+  }, [currentStickyNote?.state]);
 
-  return <Canvas stickyNotes={stickyNotes} />;
+  return (
+    <Canvas stickyNotes={stickyNotes} currentStickyNote={currentStickyNote} />
+  );
 }

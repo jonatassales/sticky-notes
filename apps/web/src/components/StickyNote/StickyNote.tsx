@@ -3,68 +3,50 @@ import { SquareArrowDownRight, Grip } from "lucide-react";
 import { cn } from "@repo/react/utils";
 import { Note, NoteState } from "@repo/contracts";
 import { Card, CardProps, IconButton } from "@repo/ds/ui";
-
-import "./StickyNote.css";
 import { useCanvasEventRegistry } from "@web/hooks";
 
-interface StickyNoteProps extends CardProps {
-  noteId: Note["id"];
-}
+import "./StickyNote.css";
 
-export function StickyNote(props: StickyNoteProps) {
-  const { noteId, ...rest } = props;
-  const { setCurrentStickyNote } = useCanvasEventRegistry();
+export function StickyNote(props: CardProps) {
+  const { setCurrentStickyNote, currentStickyNote } = useCanvasEventRegistry();
 
   const noteRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLButtonElement>(null);
   const resizeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
+    if (!currentStickyNote?.id) return;
+
     const handleMouseDown = (event: MouseEvent) => {
       event.stopPropagation();
     };
 
-    const handleOnResizeHandler = () => {
-      const updatedStickyNotes = stickyNotes.map((stickyNote) => {
-        if (stickyNote.id === noteId) {
-          return {
-            ...stickyNote,
-            state: NoteState.Resizing,
-          };
-        }
-        return stickyNote;
+    const handleOnResize = (event: MouseEvent) => {
+      setCurrentStickyNote({
+        ...currentStickyNote,
+        state: NoteState.Resizing,
       });
-
-      setStickyNotes(updatedStickyNotes);
     };
 
-    const handleOnDrag = () => {
-      const updatedStickyNotes = stickyNotes.map((stickyNote) => {
-        if (stickyNote.id === noteId) {
-          return {
-            ...stickyNote,
-            state: NoteState.Dragging,
-          };
-        }
-        return stickyNote;
+    const handleOnDrag = (event: MouseEvent) => {
+      const position = { x: event.x, y: event.y };
+      setCurrentStickyNote({
+        ...currentStickyNote,
+        state: NoteState.Dragging,
+        position,
       });
-
-      setStickyNotes(updatedStickyNotes);
     };
 
     noteRef.current?.addEventListener("mousedown", handleMouseDown);
-    resizeRef.current?.addEventListener("mousedown", handleOnResizeHandler);
+    resizeRef.current?.addEventListener("mousedown", handleOnResize);
     dragRef.current?.addEventListener("mousedown", handleOnDrag);
 
     return () => {
       noteRef.current?.addEventListener("mousedown", handleMouseDown);
-      resizeRef.current?.removeEventListener(
-        "mousedown",
-        handleOnResizeHandler
-      );
+      resizeRef.current?.removeEventListener("mousedown", handleOnResize);
       dragRef.current?.removeEventListener("mousedown", handleOnDrag);
     };
-  }, []);
+  }, [currentStickyNote?.id]);
 
   const hanndleOnBlur = () => {
     console.log("Updates stickyNotes: ");
@@ -118,11 +100,12 @@ export function StickyNote(props: StickyNoteProps) {
 
   return (
     <Card
+      id={currentStickyNote?.id}
       ref={noteRef}
       className={cn("sticky-note", {
         ["sticky-note--dragging"]: true,
       })}
-      {...rest}
+      {...props}
     >
       <IconButton
         ref={dragRef}
@@ -133,7 +116,7 @@ export function StickyNote(props: StickyNoteProps) {
         <Grip size={20} className="sticky-note__header__grab-icon" />
       </IconButton>
       <input
-        id={noteId}
+        id={currentStickyNote?.id}
         name="sticky-note-content"
         className="sticky-note__text"
         onBlur={hanndleOnBlur}
