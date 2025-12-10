@@ -1,7 +1,7 @@
-.cv-root {
+.canvas {
   max-width: inherit;
   min-height: inherit;
   overflow-x: inherit;
 
-  padding: 8px;
+  padding: var(--ds-s--ds-spacing-4);
 }

@@ -10,6 +10,18 @@
   display: flex;
   flex-direction: column;
   gap: var(--ds-spacing-2);
+
+  box-shadow: var(--ds-shadow-2);
+}
+
+.sticky-note:hover {
+  box-shadow: var(--ds-shadow-3);
+}
+
+.sticky-note--dragging {
+  box-shadow: var(--ds-shadow-drag);
+  transition: box-shadow 0.2s ease;
+  cursor: grabbing;
 }
 
 .sticky-note__text {
@@ -25,26 +37,20 @@
 
 .sticky-note__header__grab-icon {
   color: var(--ds-background);
-}
-
-.sticky-note__header--dragging {
-  box-shadow: var(--ds-shadow-drag);
-  transition: box-shadow 0.2s ease;
   cursor: grab;
 }
 
 .sticky-note__footer {
   display: flex;
   justify-content: flex-end;
-  width: 100%;
 }
 
 .sticky-note__footer--resize {
-  cursor: crosshair;
 }
 
 .sticky-note__footer__resize-icon {
   color: var(--ds-background);
+  cursor: nwse-resize;
 }
 
 @media (prefers-color-scheme: light) {

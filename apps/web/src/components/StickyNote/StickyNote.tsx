@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "react";
 import { SquareArrowDownRight, Grip } from "lucide-react";
-import { Note } from "@repo/contracts";
+import { cn } from "@repo/react/utils";
+import { Note, NoteState } from "@repo/contracts";
 import { Card, CardProps, IconButton } from "@repo/ds/ui";
 
 import "./StickyNote.css";
+import { useCanvasEventRegistry } from "@web/hooks";
 
 interface StickyNoteProps extends CardProps {
   noteId: Note["id"];
@@ -11,50 +13,90 @@ interface StickyNoteProps extends CardProps {
 
 export function StickyNote(props: StickyNoteProps) {
   const { noteId, ...rest } = props;
+  const { stickyNotes, setStickyNotes } = useCanvasEventRegistry();
 
   const noteRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLButtonElement>(null);
   const resizeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
+    const handleMouseDown = (event: MouseEvent) => {
+      event.stopPropagation();
+    };
+
+    const handleOnResizeHandler = () => {
+      const updatedStickyNotes = stickyNotes.map((stickyNote) => {
+        if (stickyNote.id === noteId) {
+          return {
+            ...stickyNote,
+            state: NoteState.Resizing,
+          };
+        }
+        return stickyNote;
+      });
+
+      setStickyNotes(updatedStickyNotes);
+    };
+
+    const handleOnDrag = () => {
+      const updatedStickyNotes = stickyNotes.map((stickyNote) => {
+        if (stickyNote.id === noteId) {
+          return {
+            ...stickyNote,
+            state: NoteState.Dragging,
+          };
+        }
+        return stickyNote;
+      });
+
+      setStickyNotes(updatedStickyNotes);
+    };
+
+    noteRef.current?.addEventListener("mousedown", handleMouseDown);
+    resizeRef.current?.addEventListener("mousedown", handleOnResizeHandler);
     dragRef.current?.addEventListener("mousedown", handleOnDrag);
-    resizeRef.current?.addEventListener("mousedown", handleOnResize);
 
     return () => {
+      noteRef.current?.addEventListener("mousedown", handleMouseDown);
+      resizeRef.current?.removeEventListener(
+        "mousedown",
+        handleOnResizeHandler
+      );
       dragRef.current?.removeEventListener("mousedown", handleOnDrag);
-      resizeRef.current?.removeEventListener("mousedown", handleOnResize);
     };
   }, []);
 
-  const handleOnResize = (event: MouseEvent) => {
-    event.stopPropagation();
-    // updateCurrentStickyNote({
-    //   state: NoteState.Resizing,
-    // });
+  const hanndleOnBlur = () => {
+    console.log("Updates stickyNotes: ");
   };
 
-  const handleOnDrag = (event: MouseEvent) => {
-    event.stopPropagation();
-    // const newPosition = { x: event.x, y: event.y };
+  // const handleOnDrag = (event: MouseEvent) => {
+  //   event.stopPropagation();
 
-    // if (currentStickyNote.state === NoteState.Dragging) {
-    //   setStickyNotes(
-    //     stickyNotes.map((note) => {
-    //       if (note.id === currentStickyNote.id) {
-    //         return {
-    //           ...note,
-    //           position: newPosition,
-    //         };
-    //       }
+  //   const newPosition = { x: event.x, y: event.y };
 
-    //       return note;
-    //     })
-    //   );
-    // }
-    // updateCurrentStickyNote({
-    //   state: NoteState.Dragging,
-    // });
-  };
+  //   if (currentStickyNote?.state === NoteState.Dragging) {
+  //     setStickyNotes(
+  //       stickyNotes.map((note) => {
+  //         if (note.id === currentStickyNote.id) {
+  //           return {
+  //             ...note,
+  //             position: newPosition,
+  //           };
+  //         }
+
+  //         return note;
+  //       })
+  //     );
+  //   }
+
+  //   setCurrentStickyNote((prev) => {
+  //     const prev = noteRef.current;
+  //     if (noteRef.current) {
+  //       setCurrentStickyNote({ ...prev, state: prev.state });
+  //     }
+  //   });
+  // };
 
   // const resizeHandler = (event: MouseEvent) => {
   //   if (currentStickyNote?.state === NoteState.Resizing) {
@@ -74,24 +116,16 @@ export function StickyNote(props: StickyNoteProps) {
   //   }
   // };
 
-  useEffect(() => {
-    noteRef.current?.addEventListener("mousedown", handleMouseDown);
-
-    return () =>
-      noteRef.current?.addEventListener("mousedown", handleMouseDown);
-  }, []);
-
-  const handleMouseDown = (event: MouseEvent) => {
-    event.stopPropagation();
-  };
-
-  const hanndleOnBlur = () => {
-    console.log("Updates stickyNotes: ");
-  };
-
   return (
-    <Card className="sticky-note" {...rest} ref={noteRef}>
+    <Card
+      ref={noteRef}
+      className={cn("sticky-note", {
+        ["sticky-note--dragging"]: true,
+      })}
+      {...rest}
+    >
       <IconButton
+        ref={dragRef}
         className="sticky-note__header"
         aria-label="Sticky note grab button"
         aria-description="Left click and hold to move the sticky note around."
@@ -106,6 +140,7 @@ export function StickyNote(props: StickyNoteProps) {
         placeholder="Enter your note here"
       />
       <IconButton
+        ref={resizeRef}
         className="sticky-note__footer"
         aria-label="Sticky note resize button"
         aria-description="Left click and hold to resize the sticky note."

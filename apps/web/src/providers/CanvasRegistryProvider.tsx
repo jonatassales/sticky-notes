@@ -5,6 +5,7 @@ import {
   createStickyNotesListener,
   createCurrentStickyNoteListener,
 } from "@web/events/listeners";
+import { noteFactory } from "@web/factory";
 
 interface CanvasRegistryProviderProps {
   children: ReactNode;
@@ -36,39 +37,48 @@ export function CanvasRegistryProvider({
     currentStickyNoteRef.current = currentStickyNote;
   }, [currentStickyNote]);
 
-  const mouseUpHandler = () => {
-    const prev = currentStickyNoteRef.current;
-    if (prev) {
-      setCurrentStickyNote({ ...prev, state: prev.state });
-    }
-  };
+  // const mouseUpHandler = () => {
+  //   const prev = currentStickyNoteRef.current;
+  //   if (prev) {
+  //     setCurrentStickyNote({ ...prev, state: prev.state });
+  //   }
+  // };
 
-  const stickyListener = () =>
-    createStickyNotesListener({
-      stickyNotesRef,
-      setStickyNotes,
-    });
+  // const stickyListener = () =>
+  //   createStickyNotesListener({
+  //     stickyNotesRef,
+  //     setStickyNotes,
+  //   });
 
-  const currentStickyListener = () =>
-    createCurrentStickyNoteListener({
-      stickyNotesRef,
-      setCurrentStickyNote,
-    });
+  // const currentStickyListener = () =>
+  //   createCurrentStickyNoteListener({
+  //     stickyNotesRef,
+  //     setCurrentStickyNote,
+  //   });
 
   useEffect(() => {
-    const stickyHandler = stickyListener();
-    const currentHandler = currentStickyListener();
+    // const stickyHandler = stickyListener();
 
-    document.addEventListener("mousedown", stickyHandler);
-    document.addEventListener("mousedown", currentHandler);
-    document.addEventListener("mouseup", mouseUpHandler);
+    const onCreateStickNoteHandler = (event: MouseEvent) => {
+      const position = { x: event.x, y: event.y };
+      const prevNotes = stickyNotesRef.current;
+      const newNote = noteFactory({ prevNotes, position });
+      setCurrentStickyNote(newNote);
+      setStickyNotes((prev) => [...prev, newNote]);
+    };
+
+    document.addEventListener("mousedown", onCreateStickNoteHandler);
+    // document.addEventListener("mouseup", mouseUpHandler);
 
     return () => {
-      document.removeEventListener("mousedown", stickyHandler);
-      document.removeEventListener("mousedown", currentHandler);
-      document.removeEventListener("mouseup", mouseUpHandler);
+      document.removeEventListener("mousedown", onCreateStickNoteHandler);
+      // document.removeEventListener(
+      //   "mousedown",
+      //   onCreateCurrentStickNoteHandler
+      // );
+      // document.removeEventListener("mouseup", mouseUpHandler);
     };
-  }, [stickyListener, currentStickyListener, mouseUpHandler]);
+  }, []);
 
   return (
     <CanvasEventRegistryContext.Provider

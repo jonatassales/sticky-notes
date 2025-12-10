@@ -10,8 +10,8 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "@preact/signals-react": "^3.6.1",
     "@repo/contracts": "workspace:*",
+    "@repo/react": "workspace:*",
     "@repo/ds": "workspace:*",
     "lucide-react": "^0.556.0",
     "react": "^18.2.0",

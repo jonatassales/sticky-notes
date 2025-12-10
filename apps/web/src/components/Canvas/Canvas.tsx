@@ -11,11 +11,9 @@ interface CanvasProps {
 export function Canvas(props: CanvasProps) {
   const { stickyNotes } = props;
 
-  console.log("Canvas");
-
   return (
-    <div className="cv-root">
-      {!!stickyNotes.length &&
+    <div className="canvas">
+      {stickyNotes.length &&
         stickyNotes.map((note) => (
           <StickyNote
             noteId={note.id}
