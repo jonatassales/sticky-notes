@@ -8,14 +8,34 @@ export function CanvasContainer() {
   const { currentStickyNote, stickyNotes, setCurrentStickyNote } =
     useCanvasEventRegistry();
 
+  const positionX = currentStickyNote?.position.x;
+  const positionY = currentStickyNote?.position.y;
+  const currentState = currentStickyNote?.state;
+
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
-      if (currentStickyNote?.state === NoteState.Dragging) {
-        console.log("Dragging");
+      if (!currentState || !positionX || !positionY) return;
+
+      if (currentState === NoteState.Dragging) {
         setCurrentStickyNote({
           ...currentStickyNote,
           position: { x: event.x, y: event.y },
         });
+
+        return;
+      }
+
+      if (currentState === NoteState.Resizing && positionX && positionY) {
+        const width = Math.max(event.x - positionX, 10);
+        const height = Math.max(event.y - positionY, 10);
+
+        setCurrentStickyNote({
+          ...currentStickyNote,
+          width,
+          height,
+        });
+
+        return;
       }
     };
 
@@ -24,7 +44,7 @@ export function CanvasContainer() {
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [currentStickyNote?.state]);
+  }, [positionX, positionY, currentState]);
 
   return (
     <Canvas stickyNotes={stickyNotes} currentStickyNote={currentStickyNote} />

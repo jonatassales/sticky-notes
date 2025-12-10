@@ -69,8 +69,9 @@ export function CanvasRegistryProvider({
       const position = { x: event.x, y: event.y };
       const prevNotes = stickyNotesRef.current;
       const newNote = noteFactory({ prevNotes, position });
-      console.log(newNote);
+
       setCurrentStickyNote(newNote);
+
       if (currentStickyNote?.id) {
         setStickyNotes([...stickyNotes, currentStickyNote]);
       }
@@ -81,10 +82,6 @@ export function CanvasRegistryProvider({
 
     return () => {
       document.removeEventListener("mousedown", onCreateStickNoteHandler);
-      // document.removeEventListener(
-      //   "mousedown",
-      //   onCreateCurrentStickNoteHandler
-      // );
       document.removeEventListener("mouseup", mouseUpHandler);
     };
   }, []);
