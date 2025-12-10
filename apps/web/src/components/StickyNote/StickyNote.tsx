@@ -13,7 +13,7 @@ interface StickyNoteProps extends CardProps {
 
 export function StickyNote(props: StickyNoteProps) {
   const { noteId, ...rest } = props;
-  const { stickyNotes, setStickyNotes } = useCanvasEventRegistry();
+  const { setCurrentStickyNote } = useCanvasEventRegistry();
 
   const noteRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLButtonElement>(null);
