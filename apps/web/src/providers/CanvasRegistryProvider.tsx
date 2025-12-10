@@ -1,6 +1,9 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
-import { Note } from "@repo/contracts";
-import { createStickyNotesListener } from "@web/events/listeners";
+import { Note, NoteState } from "@repo/contracts";
+import {
+  createStickyNotesListener,
+  createCurrentStickyNoteListener,
+} from "@web/events/listeners";
 
 interface CanvasRestryProviderProps {
   children: ReactNode;
@@ -8,6 +11,7 @@ interface CanvasRestryProviderProps {
 
 interface CanvasRestryProviderValue {
   stickyNotes: Note[];
+  currentStickyNote: Note | null;
 }
 
 export const CanvasEventRegistryContext =
@@ -17,13 +21,32 @@ export function CanvasRegistryProvider({
   children,
 }: CanvasRestryProviderProps) {
   const [stickyNotes, setStickyNotes] = useState<Note[]>([]);
+  const [currentStickyNote, setCurrentStickyNote] = useState<Note | null>(null);
 
   useEffect(() => {
-    const handler = createStickyNotesListener({ setStickyNotes });
-    document.addEventListener("mousedown", handler);
+    // TODO: Improve this section
+    const mouseUpHandler = (event: MouseEvent) => {
+      if (currentStickyNote?.id) {
+        setCurrentStickyNote({
+          ...currentStickyNote,
+          state: NoteState.Stale,
+        });
+      }
+    };
+
+    const stickyNotesHandler = createStickyNotesListener({ setStickyNotes });
+    const currentStickyNoteHandler = createCurrentStickyNoteListener({
+      setCurrentStickyNote,
+      stickyNotes,
+    });
+    document.addEventListener("mousedown", stickyNotesHandler);
+    document.addEventListener("mousedown", currentStickyNoteHandler);
+    document.addEventListener("mouseup", mouseUpHandler);
 
     return () => {
-      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("mousedown", stickyNotesHandler);
+      document.removeEventListener("mousedown", currentStickyNoteHandler);
+      document.removeEventListener("mouseup", mouseUpHandler);
     };
   }, []);
 
@@ -31,6 +54,7 @@ export function CanvasRegistryProvider({
     <CanvasEventRegistryContext.Provider
       value={{
         stickyNotes,
+        currentStickyNote,
       }}
     >
       {children}

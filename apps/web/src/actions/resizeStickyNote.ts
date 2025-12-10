@@ -1,6 +1,6 @@
 import { Note, NotePosition, NoteState } from "@repo/contracts";
 
-import { updateCurrentStickyNote } from "./updateCurrentStickyNote";
+// import { updateCurrentStickyNote } from "./updateCurrentStickyNote";
 
 export function resizeStickyNote(
   currentNote: Note,
@@ -11,5 +11,5 @@ export function resizeStickyNote(
   const width = Math.max(eventPosition.x - currentNote.position.x, 10);
   const height = Math.max(eventPosition.y - currentNote.position.y, 10);
 
-  updateCurrentStickyNote({ width, height });
+  // updateCurrentStickyNote({ width, height });
 }
