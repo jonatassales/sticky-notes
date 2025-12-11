@@ -3,20 +3,17 @@ import { Note } from "@repo/contracts";
 import { noteStyleFactory } from "@web/factory";
 import { Card, IconButton } from "@repo/ds/ui";
 
-import {
-  StickyNoteEventRegistryResult,
-  useStickyNoteEventRegistry,
-} from "./hooks";
+import { useStickyNoteEventRegistry } from "./hooks";
 import "./StickyNote.css";
 
-export interface StickyNoteProps extends StickyNoteEventRegistryResult {
+export interface StickyNoteProps {
   note: Note;
 }
 
 export function StickyNote(props: StickyNoteProps) {
-  const { note, noteRef, dragRef, resizeRef } = props;
+  const { note } = props;
 
-  useStickyNoteEventRegistry(note);
+  const { noteRef, dragRef, resizeRef } = useStickyNoteEventRegistry(note);
 
   const hanndleOnBlur = () => {
     console.log("Updates stickyNotes: ");
