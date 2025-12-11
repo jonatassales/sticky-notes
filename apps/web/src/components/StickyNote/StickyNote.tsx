@@ -10,13 +10,11 @@ export interface StickyNoteProps {
   note: Note;
 }
 
-export function StickyNote(props: StickyNoteProps) {
-  const { note } = props;
-
+export function StickyNote({ note }: StickyNoteProps) {
   const { noteRef, dragRef, resizeRef } = useStickyNoteEventRegistry(note);
 
-  const hanndleOnBlur = () => {
-    console.log("Updates stickyNotes: ");
+  const handleOnBlur = () => {
+    console.log("Updating sticky note content:", note.id);
   };
 
   return (
@@ -24,8 +22,8 @@ export function StickyNote(props: StickyNoteProps) {
       <IconButton
         ref={dragRef}
         className="sticky-note__header"
-        aria-label="Sticky note grab button"
-        aria-description="Left click and hold to move the sticky note around."
+        aria-label="Grab sticky note"
+        aria-description="Left click and hold to move the sticky note"
       >
         <Grip size={20} className="sticky-note__grab-icon" />
       </IconButton>
@@ -33,14 +31,14 @@ export function StickyNote(props: StickyNoteProps) {
         id={note.id}
         name="sticky-note-content"
         className="sticky-note__text"
-        onBlur={hanndleOnBlur}
+        onBlur={handleOnBlur}
         placeholder="Enter your note here"
       />
       <IconButton
         ref={resizeRef}
         className="sticky-note__footer"
-        aria-label="Sticky note resize button"
-        aria-description="Left click and hold to resize the sticky note."
+        aria-label="Resize sticky note"
+        aria-description="Left click and hold to resize the sticky note"
       >
         <SquareArrowDownRight size={20} className="sticky-note__resize-icon" />
       </IconButton>

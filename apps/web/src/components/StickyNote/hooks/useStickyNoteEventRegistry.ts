@@ -1,15 +1,18 @@
-import { Ref, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useStickyNotes } from "@web/providers";
-import { Note, NotePosition, NoteState } from "@repo/contracts";
+import { Note, NoteState } from "@repo/contracts";
 import { stickyNotesStateOf } from "@web/utils";
+import { draggingListener, resizingListener } from "@web/events/listeners";
 
 export interface StickyNoteEventRegistryResult {
-  noteRef: Ref<HTMLDivElement>;
-  dragRef: Ref<HTMLButtonElement>;
-  resizeRef: Ref<HTMLButtonElement>;
+  noteRef: React.Ref<HTMLDivElement>;
+  dragRef: React.Ref<HTMLButtonElement>;
+  resizeRef: React.Ref<HTMLButtonElement>;
 }
 
-export function useStickyNoteEventRegistry(note: Note) {
+export function useStickyNoteEventRegistry(
+  note: Note
+): StickyNoteEventRegistryResult {
   const { setStickyNotes } = useStickyNotes();
 
   const noteRef = useRef<HTMLDivElement>(null);
@@ -17,85 +20,63 @@ export function useStickyNoteEventRegistry(note: Note) {
   const resizeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const onMouseDownHandler = (event: MouseEvent) => {
-      event.stopPropagation();
-    };
+    let isDragging = false;
+    let isResizing = false;
 
-    const onMouseResizeHandler = (event: MouseEvent) => {
+    const onMouseDownDrag = (event: MouseEvent) => {
       event.stopPropagation();
-
+      isDragging = true;
       setStickyNotes((prevNotes) =>
-        stickyNotesStateOf({
-          state: NoteState.Resizing,
-          prevNotes,
-          note,
-        })
+        stickyNotesStateOf({ state: NoteState.Dragging, prevNotes, note })
       );
     };
 
-    const onMouseDragHandler = (event: MouseEvent) => {
+    const onMouseDownResize = (event: MouseEvent) => {
       event.stopPropagation();
-
+      isResizing = true;
       setStickyNotes((prevNotes) =>
-        stickyNotesStateOf({
-          state: NoteState.Dragging,
-          prevNotes,
-          note,
-        })
+        stickyNotesStateOf({ state: NoteState.Resizing, prevNotes, note })
       );
     };
 
-    const onMouseMoveHandler = (event: MouseEvent) => {
-      if (note.state === NoteState.Dragging) {
-        const position: NotePosition = { x: event.x, y: event.x };
+    const onMouseMove = (event: MouseEvent) => {
+      const eventListenerArgs = {
+        event,
+        note,
+        setStickyNotes,
+      };
 
+      if (isDragging) draggingListener(eventListenerArgs);
+
+      if (isResizing) resizingListener(eventListenerArgs);
+    };
+
+    const onMouseUp = () => {
+      if (isDragging || isResizing) {
+        isDragging = false;
+        isResizing = false;
         setStickyNotes((prevNotes) =>
-          prevNotes.map((prevNote) => {
-            if (note.id !== prevNote.id) return note;
-
-            return {
-              ...note,
-              position,
-            };
-          })
+          prevNotes.map((prevNote) =>
+            prevNote.id === note.id
+              ? { ...prevNote, state: NoteState.Stale }
+              : prevNote
+          )
         );
-
-        return;
-      }
-
-      if (note.state === NoteState.Resizing) {
-        setStickyNotes((prevNotes) =>
-          prevNotes.map((prevNote) => {
-            if (note.id !== prevNote.id) return prevNote;
-
-            return {
-              ...note,
-              width: Math.max(event.x - prevNote.position.x, 10),
-              height: Math.max(event.y - prevNote.position.y, 10),
-            };
-          })
-        );
-
-        return;
       }
     };
 
-    noteRef.current?.addEventListener("mousedown", onMouseDownHandler);
-    resizeRef.current?.addEventListener("mousedown", onMouseResizeHandler);
-    dragRef.current?.addEventListener("mousedown", onMouseDragHandler);
-    document.addEventListener("mousemove", onMouseMoveHandler);
+    dragRef.current?.addEventListener("mousedown", onMouseDownDrag);
+    resizeRef.current?.addEventListener("mousedown", onMouseDownResize);
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
 
     return () => {
-      noteRef.current?.addEventListener("mousedown", onMouseDownHandler);
-      resizeRef.current?.removeEventListener("mousedown", onMouseResizeHandler);
-      dragRef.current?.removeEventListener("mousedown", onMouseDragHandler);
-      document.addEventListener("mousemove", onMouseMoveHandler);
+      dragRef.current?.removeEventListener("mousedown", onMouseDownDrag);
+      resizeRef.current?.removeEventListener("mousedown", onMouseDownResize);
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
     };
-  }, []);
+  }, [note.id]);
 
-  return {
-    noteRef,
-    dragRef,
-    resizeRef,
-  };
+  return { noteRef, dragRef, resizeRef };
 }
