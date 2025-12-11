@@ -1,8 +1,8 @@
-import { CanvasContainer } from "@web/components";
-import { CanvasRegistryProvider } from "@web/providers";
+import { Canvas } from "@web/components";
+import { StickyNotesProvider } from "@web/providers";
 
 export const App = () => (
-  <CanvasRegistryProvider>
-    <CanvasContainer />
-  </CanvasRegistryProvider>
+  <StickyNotesProvider>
+    <Canvas />
+  </StickyNotesProvider>
 );

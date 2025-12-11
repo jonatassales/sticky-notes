@@ -1,4 +1,4 @@
-.tz-root {
+.trash-zone {
   position: absolute;
   display: flex;
   align-items: center;
@@ -10,6 +10,6 @@
   height: calc(var(--ds-spacing-5) * 4);
 }
 
-.tz-icon {
+.trash-zone__icon {
   color: var(--ds-danger-text);
 }

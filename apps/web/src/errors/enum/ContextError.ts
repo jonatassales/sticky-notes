@@ -1,3 +1,3 @@
 export enum ContextError {
-  CanvasEventRegistryError = "CanvasEventRegistryError",
+  StickyNotesProviderError = "StickyNotesProviderError",
 }

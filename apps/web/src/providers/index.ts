@@ -1,4 +1,3 @@
-export {
-  CanvasRegistryProvider,
-  CanvasEventRegistryContext,
-} from "./CanvasRegistryProvider";
+export { StickyNotesProvider, StickyNotesContext } from "./StickyNotesProvider";
+
+export * from "./hooks";

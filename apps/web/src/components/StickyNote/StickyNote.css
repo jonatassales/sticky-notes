@@ -1,4 +1,3 @@
-/* Root full-screen area */
 .sticky-note {
   position: absolute;
 
@@ -18,10 +17,14 @@
   box-shadow: var(--ds-shadow-3);
 }
 
-.sticky-note--dragging {
+.sticky-note:hover:active {
   box-shadow: var(--ds-shadow-drag);
   transition: box-shadow 0.2s ease;
   cursor: grabbing;
+}
+
+.sticky-note__header {
+  width: fit-content;
 }
 
 .sticky-note__text {
@@ -32,33 +35,27 @@
   height: 100%;
 }
 
-.sticky-note__header {
-}
-
-.sticky-note__header__grab-icon {
+.sticky-note__grab-icon {
   color: var(--ds-background);
   cursor: grab;
 }
 
 .sticky-note__footer {
-  display: flex;
-  justify-content: flex-end;
+  align-self: flex-end;
+  width: fit-content;
 }
 
-.sticky-note__footer--resize {
-}
-
-.sticky-note__footer__resize-icon {
+.sticky-note__resize-icon {
   color: var(--ds-background);
   cursor: nwse-resize;
 }
 
 @media (prefers-color-scheme: light) {
-  .sticky-note__footer__resize-icon {
+  .sticky-note__resize-icon {
     color: var(--ds-foreground);
   }
 
-  .sticky-note__header__grab-icon {
+  .sticky-note__grab-icon {
     color: var(--ds-foreground);
   }
 }

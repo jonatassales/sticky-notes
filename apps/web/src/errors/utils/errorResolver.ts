@@ -7,8 +7,8 @@ interface ErrorResolverResult {
 
 export function errorResolver(error: InterfaceError): ErrorResolverResult {
   return {
-    [ContextError.CanvasEventRegistryError]: {
-      message: "No Canvas event registry was returned",
+    [ContextError.StickyNotesProviderError]: {
+      message: "No sticky notes context was returned.",
     },
   }[error];
 }

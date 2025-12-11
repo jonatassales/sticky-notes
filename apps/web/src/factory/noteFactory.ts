@@ -7,16 +7,16 @@ const DEFAULT_HEIGHT = 216;
 
 interface NoteFactoryProps {
   position: NotePosition;
-  prevNotes: Note[];
+  notes: Note[];
 }
 
-export function noteFactory({ position, prevNotes }: NoteFactoryProps): Note {
+export function noteFactory({ position, notes }: NoteFactoryProps): Note {
   return {
     id: uuid(), // TODO: will be created on database insert
     position,
     width: DEFAULT_WIDTH,
     height: DEFAULT_HEIGHT,
     state: NoteState.Stale,
-    elevation: noteElevationFactory(prevNotes),
+    elevation: noteElevationFactory(notes),
   };
 }

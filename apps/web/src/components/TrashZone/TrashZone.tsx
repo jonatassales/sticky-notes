@@ -20,9 +20,9 @@ export const TrashZone = memo(function TrashZone() {
   };
 
   return (
-    <div className="tz-root" ref={trashZoneRef}>
+    <div className="trash-zone" ref={trashZoneRef}>
       <IconButton>
-        <Shredder className="tz-icon" size={80} />
+        <Shredder className="trash-zone__icon" size={80} />
       </IconButton>
     </div>
   );
