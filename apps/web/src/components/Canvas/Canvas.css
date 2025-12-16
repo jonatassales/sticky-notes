@@ -3,5 +3,5 @@
   min-height: inherit;
   overflow-x: inherit;
 
-  padding: var(--ds-s--ds-spacing-4);
+  padding: var(--ds-spacing-4);
 }

@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { CqrsModule } from "@nestjs/cqrs";
+import { MongooseModule } from "@nestjs/mongoose";
 
 import { NotesController } from "@note/interfaces/http/controllers";
 
@@ -13,7 +14,7 @@ import {
 } from "@note/application/handlers";
 
 @Module({
-  imports: [CqrsModule],
+  imports: [CqrsModule, MongooseModule.forRoot("mongodb://localhost/nest")],
   controllers: [NotesController],
   providers: [
     NoteRepository,

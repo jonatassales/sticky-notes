@@ -3,7 +3,7 @@ import { NotePosition } from "./NotePosition";
 
 export interface Note {
   id: string;
-  content?: string;
+  content: string;
   elevation: string;
   width: number;
   height: number;

@@ -1,9 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { Note, NotePosition, NoteState } from "@repo/contracts";
-import { noteElevationFactory } from "@web/factory";
-
-const DEFAULT_WIDTH = 216;
-const DEFAULT_HEIGHT = 216;
+import { Default, noteElevationFactory } from "@web/factory";
 
 interface NoteFactoryProps {
   position: NotePosition;
@@ -13,10 +10,11 @@ interface NoteFactoryProps {
 export function noteFactory({ position, notes }: NoteFactoryProps): Note {
   return {
     id: uuid(), // TODO: will be created on database insert
+    content: "",
     position,
-    width: DEFAULT_WIDTH,
-    height: DEFAULT_HEIGHT,
+    width: Default.NoteDefaultSize,
+    height: Default.NoteDefaultSize,
     state: NoteState.Stale,
-    elevation: noteElevationFactory(notes),
+    elevation: noteElevationFactory(notes).toString(),
   };
 }

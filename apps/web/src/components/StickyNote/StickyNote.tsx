@@ -1,7 +1,8 @@
 import { SquareArrowDownRight, Grip } from "lucide-react";
 import { Note } from "@repo/contracts";
-import { noteStyleFactory } from "@web/factory";
 import { Card, IconButton } from "@repo/ds/ui";
+import { Default, noteStyleFactory } from "@web/factory";
+import { saveStickyNote } from "@web/actions";
 
 import { useStickyNoteEventRegistry } from "./hooks";
 import "./StickyNote.css";
@@ -13,8 +14,10 @@ export interface StickyNoteProps {
 export function StickyNote({ note }: StickyNoteProps) {
   const { noteRef, dragRef, resizeRef } = useStickyNoteEventRegistry(note);
 
-  const handleOnBlur = () => {
-    console.log("Updating sticky note content:", note.id);
+  const handleOnBlur = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = event.currentTarget.value || "";
+    const updatedNote = { ...note, content: value };
+    saveStickyNote(updatedNote);
   };
 
   return (
@@ -25,12 +28,15 @@ export function StickyNote({ note }: StickyNoteProps) {
         aria-label="Grab sticky note"
         aria-description="Left click and hold to move the sticky note"
       >
-        <Grip size={20} className="sticky-note__grab-icon" />
+        <Grip
+          size={Default.NoteGrabIconSize}
+          className="sticky-note__grab-icon"
+        />
       </IconButton>
-      <input
+      <textarea
         id={note.id}
-        name="sticky-note-content"
         className="sticky-note__text"
+        defaultValue={note.content}
         onBlur={handleOnBlur}
         placeholder="Enter your note here"
       />
@@ -40,7 +46,10 @@ export function StickyNote({ note }: StickyNoteProps) {
         aria-label="Resize sticky note"
         aria-description="Left click and hold to resize the sticky note"
       >
-        <SquareArrowDownRight size={20} className="sticky-note__resize-icon" />
+        <SquareArrowDownRight
+          size={Default.NoteResizeIconSize}
+          className="sticky-note__resize-icon"
+        />
       </IconButton>
     </Card>
   );

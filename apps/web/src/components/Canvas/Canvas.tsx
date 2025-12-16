@@ -6,8 +6,6 @@ import "./Canvas.css";
 export function Canvas() {
   const { stickyNotes } = useStickyNotes();
 
-  console.log(stickyNotes);
-
   return (
     <div className="canvas">
       {!!stickyNotes.length &&

@@ -1,0 +1,1 @@
+export { useTrashZoneEventRegistry } from "./useTrashZoneEventRegistry";
