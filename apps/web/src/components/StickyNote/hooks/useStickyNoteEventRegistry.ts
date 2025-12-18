@@ -5,10 +5,8 @@ import {
   dragEventListener,
   resizeEventListener,
   cancelBubblingEventListener,
+  mouseUpEventListener,
 } from "@web/events/listeners";
-import { saveStickyNote } from "@web/actions";
-import { notifyTrashZoneDropEventHandler } from "@web/events/handlers";
-import { isCardOverTrashZone } from "@web/utils";
 
 export interface StickyNoteEventRegistryResult {
   noteRef: React.Ref<HTMLDivElement>;
@@ -61,23 +59,12 @@ export function useStickyNoteEventRegistry(
     };
 
     const onMouseUp = (event: MouseEvent) => {
-      if (isDragging || isResizing) {
-        if (
-          isDragging &&
-          noteRef.current &&
-          isCardOverTrashZone(noteRef.current)
-        ) {
-          notifyTrashZoneDropEventHandler(event, note.id);
-        } else {
-          const updatedNote = stickyNotesRef.current.find(
-            (stickyNote) => stickyNote.id === note.id
-          );
-
-          if (updatedNote) {
-            saveStickyNote(updatedNote);
-          }
-        }
-      }
+      mouseUpEventListener({
+        event,
+        note,
+        cardElement: noteRef.current,
+        stickyNotes: stickyNotesRef.current,
+      });
 
       isDragging = false;
       isResizing = false;

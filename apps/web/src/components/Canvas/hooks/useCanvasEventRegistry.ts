@@ -1,11 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Note, NotePosition } from "@repo/contracts";
 import { noteFactory } from "@web/factory";
 import { useStickyNotes } from "@web/providers/hooks";
 import { saveStickyNote } from "@web/actions";
 
 export function useCanvasEventRegistry() {
-  const { stickyNotes, setStickyNotes } = useStickyNotes();
+  const { setStickyNotes } = useStickyNotes();
 
   useEffect(() => {
     const onMouseDownHandler = (event: MouseEvent) => {
