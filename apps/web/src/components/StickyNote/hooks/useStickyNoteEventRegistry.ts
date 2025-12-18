@@ -99,7 +99,7 @@ export function useStickyNoteEventRegistry(
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
     };
-  }, [note, setStickyNotes]);
+  }, []);
 
   return { noteRef, dragRef, resizeRef };
 }
