@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@repo/contracts": "workspace:*",
-    "@repo/react": "workspace:*",
     "@repo/ds": "workspace:*",
+    "@repo/react": "workspace:*",
     "lucide-react": "^0.556.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

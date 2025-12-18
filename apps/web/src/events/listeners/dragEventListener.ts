@@ -1,4 +1,4 @@
-import { Note, NotePosition, NoteState } from "@repo/contracts";
+import { Note, NotePosition } from "@repo/contracts";
 
 interface DragEventListenerArgs {
   event: MouseEvent;
@@ -12,9 +12,10 @@ export function dragEventListener({
   setStickyNotes,
 }: DragEventListenerArgs) {
   const position: NotePosition = { x: event.clientX, y: event.clientY };
-  const newNote = { ...note, position, state: NoteState.Dragging };
 
   setStickyNotes((prevNotes) =>
-    prevNotes.map((prevNote) => (prevNote.id === note.id ? newNote : prevNote))
+    prevNotes.map((prevNote) =>
+      prevNote.id === note.id ? { ...prevNote, position } : prevNote
+    )
   );
 }

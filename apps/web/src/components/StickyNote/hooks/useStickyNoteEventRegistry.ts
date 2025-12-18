@@ -1,12 +1,14 @@
 import { useEffect, useRef } from "react";
-import { Note, NoteState } from "@repo/contracts";
+import { Note } from "@repo/contracts";
 import { useStickyNotes } from "@web/providers";
 import {
   dragEventListener,
   resizeEventListener,
-  staleEventListener,
   cancelBubblingEventListener,
 } from "@web/events/listeners";
+import { saveStickyNote } from "@web/actions";
+import { notifyTrashZoneDropEventHandler } from "@web/events/handlers";
+import { isCardOverTrashZone } from "@web/utils";
 
 export interface StickyNoteEventRegistryResult {
   noteRef: React.Ref<HTMLDivElement>;
@@ -17,43 +19,68 @@ export interface StickyNoteEventRegistryResult {
 export function useStickyNoteEventRegistry(
   note: Note
 ): StickyNoteEventRegistryResult {
-  const { setStickyNotes } = useStickyNotes();
+  const { stickyNotes, setStickyNotes } = useStickyNotes();
 
   const noteRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLButtonElement>(null);
   const resizeRef = useRef<HTMLButtonElement>(null);
+  const stickyNotesRef = useRef<Note[]>([]);
 
   useEffect(() => {
-    const onMouseDragDown = (event: MouseEvent) => {
-      dragEventListener({ event, note, setStickyNotes });
+    stickyNotesRef.current = stickyNotes;
+  }, [stickyNotes]);
+
+  useEffect(() => {
+    let isResizing = false;
+    let isDragging = false;
+
+    const onMouseDragDown = () => {
+      isDragging = true;
     };
 
-    const onMouseResizeDown = (event: MouseEvent) => {
-      resizeEventListener({ event, note, setStickyNotes });
+    const onMouseResizeDown = () => {
+      isResizing = true;
     };
 
     const onMouseMove = (event: MouseEvent) => {
-      if (
-        note.state === NoteState.Dragging ||
-        note.state === NoteState.Resizing
-      )
-        return;
-
       const eventListenerArgs = {
         event,
         note,
         setStickyNotes,
       };
 
-      if (NoteState.Dragging) dragEventListener(eventListenerArgs);
-      if (NoteState.Resizing) resizeEventListener(eventListenerArgs);
+      if (isDragging) {
+        dragEventListener(eventListenerArgs);
+        return;
+      }
+
+      if (isResizing) {
+        resizeEventListener(eventListenerArgs);
+        return;
+      }
     };
 
     const onMouseUp = (event: MouseEvent) => {
-      if (!noteRef.current) return;
+      if (isDragging || isResizing) {
+        if (
+          isDragging &&
+          noteRef.current &&
+          isCardOverTrashZone(noteRef.current)
+        ) {
+          notifyTrashZoneDropEventHandler(event, note.id);
+        } else {
+          const updatedNote = stickyNotesRef.current.find(
+            (stickyNote) => stickyNote.id === note.id
+          );
 
-      const cardElement = noteRef.current;
-      staleEventListener({ cardElement, event, note, setStickyNotes });
+          if (updatedNote) {
+            saveStickyNote(updatedNote);
+          }
+        }
+      }
+
+      isDragging = false;
+      isResizing = false;
     };
 
     noteRef.current?.addEventListener("mousedown", cancelBubblingEventListener);
@@ -72,7 +99,7 @@ export function useStickyNoteEventRegistry(
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
     };
-  }, []);
+  }, [note, setStickyNotes]);
 
   return { noteRef, dragRef, resizeRef };
 }

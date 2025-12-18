@@ -15,7 +15,7 @@ export function resizeEventListener({
     prevNotes.map((prevNote) => {
       const width = Math.max(event.clientX - prevNote.position.x, 50);
       const height = Math.max(event.clientY - prevNote.position.y, 50);
-      const newNote = { ...prevNote, width, height, state: NoteState.Resizing };
+      const newNote = { ...prevNote, width, height };
 
       return prevNote.id === note.id ? newNote : prevNote;
     })
