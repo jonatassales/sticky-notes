@@ -1,9 +1,12 @@
 import { useEffect, useRef } from "react";
 import { Note, NoteState } from "@repo/contracts";
 import { useStickyNotes } from "@web/providers";
-import { stickyNotesStateOf } from "@web/utils";
-import { draggingListener, resizingListener } from "@web/events/listeners";
-import { saveStickyNote } from "@web/actions";
+import {
+  dragEventListener,
+  resizeEventListener,
+  staleEventListener,
+  cancelBubblingEventListener,
+} from "@web/events/listeners";
 
 export interface StickyNoteEventRegistryResult {
   noteRef: React.Ref<HTMLDivElement>;
@@ -14,137 +17,62 @@ export interface StickyNoteEventRegistryResult {
 export function useStickyNoteEventRegistry(
   note: Note
 ): StickyNoteEventRegistryResult {
-  const { stickyNotes, setStickyNotes } = useStickyNotes();
+  const { setStickyNotes } = useStickyNotes();
 
   const noteRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLButtonElement>(null);
   const resizeRef = useRef<HTMLButtonElement>(null);
 
-  const notesRef = useRef<Note[]>([]);
-
   useEffect(() => {
-    notesRef.current = stickyNotes;
-  }, [stickyNotes]);
-
-  useEffect(() => {
-    let state: NoteState;
-
-    const onCardMouseDown = (event: MouseEvent) => {
-      event.stopPropagation();
+    const onMouseDragDown = (event: MouseEvent) => {
+      dragEventListener({ event, note, setStickyNotes });
     };
 
-    const onMouseDownDrag = () => {
-      state = NoteState.Dragging;
-      setStickyNotes((prevNotes) =>
-        stickyNotesStateOf({ state: NoteState.Dragging, prevNotes, note })
-      );
-    };
-
-    const onMouseDownResize = () => {
-      state = NoteState.Resizing;
-      setStickyNotes((prevNotes) =>
-        stickyNotesStateOf({ state: NoteState.Resizing, prevNotes, note })
-      );
-    };
-
-    const isCardOverTrashZone = () => {
-      const trashZoneElement = document.querySelector(".trash-zone");
-      const cardElement = noteRef.current;
-
-      if (!trashZoneElement || !cardElement) return false;
-
-      const trashRect = trashZoneElement.getBoundingClientRect();
-      const cardRect = cardElement.getBoundingClientRect();
-
-      return (
-        cardRect.left < trashRect.right &&
-        cardRect.right > trashRect.left &&
-        cardRect.top < trashRect.bottom &&
-        cardRect.bottom > trashRect.top
-      );
+    const onMouseResizeDown = (event: MouseEvent) => {
+      resizeEventListener({ event, note, setStickyNotes });
     };
 
     const onMouseMove = (event: MouseEvent) => {
+      if (
+        note.state === NoteState.Dragging ||
+        note.state === NoteState.Resizing
+      )
+        return;
+
       const eventListenerArgs = {
         event,
         note,
         setStickyNotes,
       };
 
-      if (state === NoteState.Dragging) {
-        draggingListener(eventListenerArgs);
-      }
-
-      if (state === NoteState.Resizing) {
-        resizingListener(eventListenerArgs);
-      }
-    };
-
-    const notifyTrashZoneDrop = (event: MouseEvent) => {
-      const trashZoneElement = document.querySelector(".trash-zone");
-
-      if (!trashZoneElement) return;
-
-      const dropEvent = new CustomEvent<{
-        noteId: string;
-        clientX: number;
-        clientY: number;
-      }>("drop", {
-        detail: {
-          noteId: note.id,
-          clientX: event.clientX,
-          clientY: event.clientY,
-        },
-        bubbles: true,
-      });
-
-      trashZoneElement.dispatchEvent(dropEvent);
+      if (NoteState.Dragging) dragEventListener(eventListenerArgs);
+      if (NoteState.Resizing) resizeEventListener(eventListenerArgs);
     };
 
     const onMouseUp = (event: MouseEvent) => {
-      if (state === NoteState.Dragging || state === NoteState.Resizing) {
-        const isDroppedInTrash =
-          state === NoteState.Dragging && isCardOverTrashZone();
+      if (!noteRef.current) return;
 
-        if (isDroppedInTrash) {
-          notifyTrashZoneDrop(event);
-          return;
-        }
-
-        const currentNote = notesRef.current.find(
-          (noteRef) => noteRef.id === note.id
-        );
-
-        if (currentNote) {
-          saveStickyNote(currentNote);
-        }
-
-        state = NoteState.Stale;
-
-        setStickyNotes((prevNotes) =>
-          prevNotes.map((prevNote) =>
-            prevNote.id === note.id
-              ? { ...prevNote, state: NoteState.Stale }
-              : prevNote
-          )
-        );
-      }
+      const cardElement = noteRef.current;
+      staleEventListener({ cardElement, event, note, setStickyNotes });
     };
 
-    noteRef.current?.addEventListener("mousedown", onCardMouseDown);
-    dragRef.current?.addEventListener("mousedown", onMouseDownDrag);
-    resizeRef.current?.addEventListener("mousedown", onMouseDownResize);
+    noteRef.current?.addEventListener("mousedown", cancelBubblingEventListener);
+    dragRef.current?.addEventListener("mousedown", onMouseDragDown);
+    resizeRef.current?.addEventListener("mousedown", onMouseResizeDown);
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
 
     return () => {
-      noteRef.current?.removeEventListener("mousedown", onCardMouseDown);
-      dragRef.current?.removeEventListener("mousedown", onMouseDownDrag);
-      resizeRef.current?.removeEventListener("mousedown", onMouseDownResize);
+      noteRef.current?.removeEventListener(
+        "mousedown",
+        cancelBubblingEventListener
+      );
+      dragRef.current?.removeEventListener("mousedown", onMouseDragDown);
+      resizeRef.current?.removeEventListener("mousedown", onMouseResizeDown);
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
     };
-  }, [note.id]);
+  }, []);
 
   return { noteRef, dragRef, resizeRef };
 }

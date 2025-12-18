@@ -8,14 +8,14 @@ export function useCanvasEventRegistry() {
   const { stickyNotes, setStickyNotes } = useStickyNotes();
 
   useEffect(() => {
-    const notes = stickyNotes;
-
     const onMouseDownHandler = (event: MouseEvent) => {
       const position: NotePosition = { x: event.x, y: event.y };
-      const newNote: Note = noteFactory({ notes, position });
 
-      setStickyNotes((prevNotes) => [...prevNotes, newNote]); // TODO: This won't be necessary once BE in responding
-      saveStickyNote(newNote);
+      setStickyNotes((prevNotes) => {
+        const newNote: Note = noteFactory({ notes: prevNotes, position });
+        saveStickyNote(newNote);
+        return [...prevNotes, newNote];
+      });
     };
 
     document.addEventListener("mousedown", onMouseDownHandler);

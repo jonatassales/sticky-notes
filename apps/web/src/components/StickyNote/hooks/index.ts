@@ -1,2 +1,4 @@
-export { useStickyNoteEventRegistry } from "./useStickyNoteEventRegistry";
-export type { StickyNoteEventRegistryResult } from "./useStickyNoteEventRegistry";
+export {
+  useStickyNoteEventRegistry,
+  type StickyNoteEventRegistryResult,
+} from "./useStickyNoteEventRegistry";
